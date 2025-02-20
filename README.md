@@ -1,1 +1,0 @@
-# ws-delta-live-tables
