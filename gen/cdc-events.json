@@ -1,0 +1,131 @@
+{
+    "generators": [
+        {
+            "container": "owshq-shadow-traffic",
+            "containerConfigs": {
+                "keyPrefix": "events/",
+                "format": "jsonl"
+            },
+            "fork": {
+                "key": { "_gen": "uuid" },
+                "stagger": { "ms": 500 }
+            },
+            "vars": {
+                "opType": {
+                    "_gen": "stateMachine",
+                    "initial": "c",
+                    "transitions": {
+                        "c": {
+                            "_gen": "weightedOneOf",
+                            "choices": [
+                                { "weight": 4, "value": "u" },
+                                { "weight": 1, "value": "d" }
+                            ]
+                        },
+                        "u": {
+                            "_gen": "oneOf",
+                            "choices": ["u", "d"]
+                        },
+                        "d": "c"
+                    },
+                    "states": {
+                        "c": { "value": "c" },
+                        "u": { "value": "u" },
+                        "d": { "value": "d" }
+                    }
+                }
+            },
+            "key": {
+                "_gen": "var", "var": "forkKey"
+            },
+            "data": {
+                "op": { "_gen": "var", "var": "opType" },
+                "payload": {
+                    "before": { "_gen": "previousEvent", "path": ["data", "payload", "after"] },
+                    "after": {
+                        "id": { "_gen": "var", "var": "forkKey" },
+                        "firstName": { "_gen": "string", "expr": "#{Name.first_name}" },
+                        "lastName": { "_gen": "string", "expr": "#{Name.last_name}" },
+                        "email": { "_gen": "string", "expr": "#{Internet.email_address}" }
+                    }
+                }
+            },
+            "stateMachine": {
+                "_gen": "stateMachine",
+                "initial": "insert",
+                "merge": { "previous": true },
+                "transitions": {
+                    "insert": {
+                        "_gen": "weightedOneOf",
+                        "choices": [
+                            { "weight": 4, "value": "update" },
+                            { "weight": 1, "value": "delete" }
+                        ]
+                    },
+                    "update": {
+                        "_gen": "oneOf",
+                        "choices": ["update", "delete"]
+                    },
+                    "delete": "insert"
+                },
+                "states": {
+                    "insert": {
+                        "data": {
+                            "op": "c",
+                            "payload": {
+                                "before": null,
+                                "after": {
+                                    "id": { "_gen": "var", "var": "forkKey" },
+                                    "firstName": { "_gen": "string", "expr": "#{Name.first_name}" },
+                                    "lastName": { "_gen": "string", "expr": "#{Name.last_name}" },
+                                    "email": { "_gen": "string", "expr": "#{Internet.email_address}" }
+                                }
+                            }
+                        }
+                    },
+                    "update": {
+                        "data": {
+                            "op": "u",
+                            "payload": {
+                                "before": { "_gen": "previousEvent", "path": ["data", "payload", "after"] },
+                                "after": {
+                                    "_gen": "someKeys",
+                                    "object": {
+                                        "firstName": { "_gen": "string", "expr": "#{Name.first_name}" },
+                                        "lastName": { "_gen": "string", "expr": "#{Name.last_name}" },
+                                        "email": { "_gen": "string", "expr": "#{Internet.email_address}" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "delete": {
+                        "data": {
+                            "op": "d",
+                            "payload": {
+                                "before": { "_gen": "previousEvent", "path": ["data", "payload", "after"] },
+                                "after": null
+                            }
+                        }
+                    }
+                }
+            },
+            "localConfigs": {
+                "throttleMs": 250
+            }
+        }
+    ],
+    "connections": {
+        "azure": {
+            "kind": "azureBlobStorage",
+            "connectionConfigs": {
+                "connectionString": ""
+            },
+            "batchConfigs": {
+                "lingerMs": 2000,
+                "batchElements": 10000,
+                "batchBytes": 5242880
+            }
+        }
+    }
+}

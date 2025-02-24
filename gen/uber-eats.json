@@ -1,0 +1,523 @@
+{
+    "generators": [
+        {
+            "container": "owshq-shadow-traffic",
+            "containerConfigs": {
+                "keyPrefix": "mssql/users/",
+                "format": "jsonl"
+            },
+            "data": {
+                "user_id": {
+                    "_gen": "sequentialInteger",
+                    "startingFrom": 1
+                },
+                "uuid": { "_gen": "uuid" },
+                "first_name": {
+                    "_gen": "string",
+                    "expr": "#{Name.firstName}",
+                    "locale": ["pt", "BR"]
+                },
+                "last_name": {
+                    "_gen": "string",
+                    "expr": "#{Name.lastName}",
+                    "locale": ["pt", "BR"]
+                },
+                "cpf": {
+                    "_gen": "string",
+                    "expr": "#{numerify '###.###.###-##'}",
+                    "locale": ["pt", "BR"]
+                },
+                "birthday": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "uniformDistribution", "bounds": [-2524608000000, 7258118400000] },
+                    "format": "yyyy-MM-dd"
+                },
+                "company_name": {
+                    "_gen": "string",
+                    "expr": "#{Company.name}",
+                    "locale": ["pt", "BR"]
+                },
+                "job": {
+                    "_gen": "string",
+                    "expr": "#{Job.title}",
+                    "locale": ["pt", "BR"]
+                },
+                "phone_number": {
+                    "_gen": "string",
+                    "expr": "#{PhoneNumber.phoneNumber}",
+                    "locale": ["pt", "BR"]
+                },
+                "country": {
+                    "_gen": "oneOf",
+                    "choices": ["BR"]
+                },
+                "dt_current_timestamp": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "now" },
+                    "format": "yyyy-MM-dd HH:mm:ss.SSS"
+                }
+            }
+        },
+        {
+            "container": "owshq-shadow-traffic",
+            "containerConfigs": {
+                "keyPrefix": "mongodb/users/",
+                "format": "jsonl"
+            },
+            "data": {
+                "user_id": { "_gen": "sequentialInteger", "startingFrom": 1 },
+                "uuid": { "_gen": "uuid" },
+                "user_identifier": {
+                    "_gen": "lookup",
+                    "container": "owshq-shadow-traffic",
+                    "keyPrefix": "mssql/users/",
+                    "path": ["data", "cpf"]
+                },
+                "email": { "_gen": "string", "expr": "#{Internet.emailAddress}", "locale": ["pt", "BR"]},
+                "phone_number": { "_gen": "string", "expr": "#{PhoneNumber.phoneNumber}", "locale": ["pt", "BR"]},
+                "delivery_address": { "_gen": "string", "expr": "#{Address.fullAddress}", "locale": ["pt", "BR"]},
+                "city": { "_gen": "string", "expr": "#{Address.city}", "locale": ["pt", "BR"]},
+                "country": {
+                    "_gen": "oneOf",
+                    "choices": ["BR"]
+                },
+                "dt_current_timestamp": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "now" },
+                    "format": "yyyy-MM-dd HH:mm:ss.SSS"
+                }
+            }
+        },
+        {
+            "container": "owshq-shadow-traffic",
+            "containerConfigs": {
+                "keyPrefix": "postgres/drivers/",
+                "format": "jsonl"
+            },
+            "data": {
+                "driver_id": { "_gen": "sequentialInteger", "startingFrom": 1 },
+                "uuid": { "_gen": "uuid" },
+                "first_name": {
+                    "_gen": "string",
+                    "expr": "#{Name.firstName}",
+                    "locale": ["pt", "BR"]
+                },
+                "last_name": {
+                    "_gen": "string",
+                    "expr": "#{Name.lastName}",
+                    "locale": ["pt", "BR"]
+                },
+                "date_birth": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "uniformDistribution", "bounds": [-2524608000000, 7258118400000] },
+                    "format": "yyyy-MM-dd"
+                },
+                "city": {
+                    "_gen": "string",
+                    "expr": "#{Address.city}",
+                    "locale": ["pt", "BR"]
+                },
+                "country": {
+                    "_gen": "oneOf",
+                    "choices": ["BR"]
+                },
+                "phone_number": {
+                    "_gen": "string",
+                    "expr": "#{PhoneNumber.phoneNumber}",
+                    "locale": ["pt", "BR"]
+                },
+                "license_number": {
+                    "_gen": "string",
+                    "expr": "#{bothify '??#######'}"
+                },
+                "vehicle_type": {
+                    "_gen": "oneOf",
+                    "choices": ["Motorcycle", "Car", "Bicycle", "Scooter", "E-Bike", "Walk"]
+                },
+                "vehicle_make": {
+                    "_gen": "string",
+                    "expr": "#{Company.name}",
+                    "locale": ["pt", "BR"]
+                },
+                "vehicle_model": {
+                    "_gen": "string",
+                    "expr": "#{Commerce.productName}",
+                    "locale": ["pt", "BR"]
+                },
+                "vehicle_year": {
+                    "_gen": "uniformDistribution",
+                    "bounds": [1980, 2024],
+                    "decimals": 0
+                },
+                "vehicle_license_plate": {
+                    "_gen": "string",
+                    "expr": "#{bothify '???###'}",
+                    "locale": ["pt", "BR"]
+                },
+                "dt_current_timestamp": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "now" },
+                    "format": "yyyy-MM-dd HH:mm:ss.SSS"
+                }
+            }
+        },
+        {
+            "container": "owshq-shadow-traffic",
+            "containerConfigs": {
+                "keyPrefix": "mysql/restaurants/",
+                "format": "jsonl"
+            },
+            "data": {
+                "restaurant_id": {
+                    "_gen": "sequentialInteger",
+                    "startingFrom": 1
+                },
+                "uuid": { "_gen": "uuid" },
+                "name": {
+                    "_gen": "string",
+                    "expr": "#{Company.name} Restaurante",
+                    "locale": ["pt", "BR"]
+                },
+                "address": {
+                    "_gen": "string",
+                    "expr": "#{Address.streetAddress}\n#{Address.city} - #{Address.stateAbbr}\n#{Address.zipCode}",
+                    "locale": ["pt", "BR"]
+                },
+                "city": {
+                    "_gen": "string",
+                    "expr": "#{Address.city}",
+                    "locale": ["pt", "BR"]
+                },
+                "country": {
+                    "_gen": "oneOf",
+                    "choices": ["BR"]
+                },
+                "phone_number": {
+                    "_gen": "string",
+                    "expr": "#{PhoneNumber.phoneNumber}",
+                    "locale": ["pt", "BR"]
+                },
+                "cuisine_type": {
+                    "_gen": "oneOf",
+                    "choices": ["Italian", "Chinese", "Japanese", "Mexican", "Indian", "American", "French"]
+                },
+                "opening_time": {
+                    "_gen": "oneOf",
+                    "choices": ["08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM"]
+                },
+                "closing_time": {
+                    "_gen": "oneOf",
+                    "choices": ["06:00 PM", "08:00 PM", "10:00 PM", "11:00 PM"]
+                },
+                "average_rating": {
+                    "_gen": "uniformDistribution",
+                    "bounds": [0.0, 5.0],
+                    "decimals": 1
+                },
+                "num_reviews": {
+                    "_gen": "uniformDistribution",
+                    "bounds": [0, 10000],
+                    "decimals": 0
+                },
+                "dt_current_timestamp": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "now" },
+                    "format": "yyyy-MM-dd HH:mm:ss.SSS"
+                },
+                "cnpj": {
+                    "_gen": "string",
+                    "expr": "#{numerify '##.###.###/####-##'}",
+                    "locale": ["pt", "BR"]
+                }
+            }
+        },
+        {
+            "container": "owshq-shadow-traffic",
+            "containerConfigs": {
+                "keyPrefix": "mysql/ratings/",
+                "format": "jsonl"
+            },
+            "data": {
+                "rating_id": {
+                    "_gen": "sequentialInteger",
+                    "startingFrom": 1
+                },
+                "uuid": { "_gen": "uuid" },
+                "restaurant_identifier": {
+                    "_gen": "lookup",
+                    "container": "owshq-shadow-traffic",
+                    "keyPrefix": "mysql/restaurants/",
+                    "path": ["data", "cnpj"]
+                },
+                "rating": {
+                    "_gen": "uniformDistribution",
+                    "bounds": [1, 5],
+                    "decimals": 0
+                },
+                "timestamp": {
+                    "_gen": "formatDateTime",
+                    "ms": {
+                        "_gen": "uniformDistribution",
+                        "bounds": [1609459200000, { "_gen": "now" }]
+                    },
+                    "format": "yyyy-MM-dd HH:mm:ss"
+                },
+                "dt_current_timestamp": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "now" },
+                    "format": "yyyy-MM-dd HH:mm:ss.SSS"
+                }
+            }
+        },
+        {
+            "container": "owshq-shadow-traffic",
+            "containerConfigs": {
+                "keyPrefix": "kafka/orders/",
+                "format": "jsonl"
+            },
+            "data": {
+                "order_id": { "_gen": "uuid" },
+                "user_key": {
+                    "_gen": "lookup",
+                    "container": "owshq-shadow-traffic",
+                    "keyPrefix": "mssql/users/",
+                    "path": ["data", "cpf"]
+                },
+                "restaurant_key": {
+                    "_gen": "lookup",
+                    "container": "owshq-shadow-traffic",
+                    "keyPrefix": "mysql/restaurants/",
+                    "path": ["data", "cnpj"]
+                },
+                "driver_key": {
+                    "_gen": "lookup",
+                    "container": "owshq-shadow-traffic",
+                    "keyPrefix": "postgres/drivers/",
+                    "path": ["data", "license_number"]
+                },
+                "order_date": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "uniformDistribution", "bounds": [1609459200000, { "_gen": "now" }] },
+                    "format": "yyyy-MM-dd HH:mm:ss.SSSSSS"
+                },
+                "total_amount": {
+                    "_gen": "uniformDistribution",
+                    "bounds": [5.0, 100.0],
+                    "decimals": 2
+                },
+                "payment_id": { "_gen": "uuid" },
+                "dt_current_timestamp": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "now" },
+                    "format": "yyyy-MM-dd HH:mm:ss.SSS"
+                }
+            }
+        },
+        {
+            "container": "owshq-shadow-traffic",
+            "containerConfigs": {
+                "keyPrefix": "kafka/status/",
+                "format": "jsonl"
+            },
+            "fork": {
+                "key": {
+                    "_gen": "uuid"
+                }
+            },
+            "data": {
+                "status_id": {
+                    "_gen": "sequentialInteger",
+                    "startingFrom": 1
+                },
+                "order_identifier": {
+                    "_gen": "lookup",
+                    "container": "owshq-shadow-traffic",
+                    "keyPrefix": "kafka/orders/",
+                    "path": ["data", "order_id"]
+                },
+                "status": {
+                    "_gen": "stateMachine",
+                    "initial": "Order Placed",
+                    "transitions": {
+                        "Order Placed": "In Analysis",
+                        "In Analysis": "Accepted",
+                        "Accepted": "Preparing",
+                        "Preparing": "Ready for Pickup",
+                        "Ready for Pickup": "Picked Up",
+                        "Picked Up": "Out for Delivery",
+                        "Out for Delivery": "Delivered",
+                        "Delivered": "Completed"
+                    },
+                    "states": {
+                        "Order Placed": {
+                            "status_name": "Order Placed",
+                            "timestamp": { "_gen": "now" , "format": "yyyy-MM-dd HH:mm:ss.SSS"}
+                        },
+                        "In Analysis": {
+                            "status_name": "In Analysis",
+                            "timestamp": {
+                                "_gen": "math",
+                                "expr": "previousTimestamp + duration",
+                                "format": "yyyy-MM-dd HH:mm:ss.SSS",
+                                "names": {
+                                    "previousTimestamp": { "_gen": "previousEvent", "path": ["data", "status", "timestamp"] },
+                                    "duration": {
+                                        "_gen": "weightedOneOf",
+                                        "choices": [
+                                            {"weight": 8, "value": {"_gen": "uniformDistribution", "bounds": [300000, 900000], "decimals": 0}},
+                                            {"weight": 2, "value": 0}
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "Accepted": {
+                            "status_name": "Accepted",
+                            "timestamp": {
+                                "_gen": "math",
+                                "expr": "previousTimestamp + duration",
+                                "format": "yyyy-MM-dd HH:mm:ss.SSS",
+                                "names": {
+                                    "previousTimestamp": { "_gen": "previousEvent", "path": ["data", "status", "timestamp"] },
+                                    "duration": {
+                                        "_gen": "weightedOneOf",
+                                        "choices": [
+                                            {"weight": 7, "value": {"_gen": "uniformDistribution", "bounds": [300000, 900000], "decimals": 0}},
+                                            {"weight": 2, "value": 0}
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "Preparing": {
+                            "status_name": "Preparing",
+                            "timestamp": {
+                                "_gen": "math",
+                                "expr": "previousTimestamp + duration",
+                                "format": "yyyy-MM-dd HH:mm:ss.SSS",
+                                "names": {
+                                    "previousTimestamp": { "_gen": "previousEvent", "path": ["data", "status", "timestamp"] },
+                                    "duration": {
+                                        "_gen": "weightedOneOf",
+                                        "choices": [
+                                            {"weight": 6, "value": {"_gen": "uniformDistribution", "bounds": [600000, 1800000], "decimals": 0}},
+                                            {"weight": 4, "value": 0}
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "Ready for Pickup": {
+                            "status_name": "Ready for Pickup",
+                            "timestamp": {
+                                "_gen": "math",
+                                "expr": "previousTimestamp + duration",
+                                "format": "yyyy-MM-dd HH:mm:ss.SSS",
+                                "names": {
+                                    "previousTimestamp": { "_gen": "previousEvent", "path": ["data", "status", "timestamp"] },
+                                    "duration": {
+                                        "_gen": "weightedOneOf",
+                                        "choices": [
+                                            {"weight": 6, "value": {"_gen": "uniformDistribution", "bounds": [300000, 600000], "decimals": 0}},
+                                            {"weight": 4, "value": 0}
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "Picked Up": {
+                            "status_name": "Picked Up",
+                            "timestamp": {
+                                "_gen": "math",
+                                "expr": "previousTimestamp + duration",
+                                "format": "yyyy-MM-dd HH:mm:ss.SSS",
+                                "names": {
+                                    "previousTimestamp": { "_gen": "previousEvent", "path": ["data", "status", "timestamp"] },
+                                    "duration": {
+                                        "_gen": "weightedOneOf",
+                                        "choices": [
+                                            {"weight": 6, "value": {"_gen": "uniformDistribution", "bounds": [300000, 600000], "decimals": 0}},
+                                            {"weight": 4, "value": 0}
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "Out for Delivery": {
+                            "status_name": "Out for Delivery",
+                            "timestamp": {
+                                "_gen": "math",
+                                "expr": "previousTimestamp + duration",
+                                "format": "yyyy-MM-dd HH:mm:ss.SSS",
+                                "names": {
+                                    "previousTimestamp": { "_gen": "previousEvent", "path": ["data", "status", "timestamp"] },
+                                    "duration": {
+                                        "_gen": "weightedOneOf",
+                                        "choices": [
+                                            {"weight": 6, "value": {"_gen": "uniformDistribution", "bounds": [600000, 1800000], "decimals": 0}},
+                                            {"weight": 4, "value": 0}
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "Delivered": {
+                            "status_name": "Delivered",
+                            "timestamp": {
+                                "_gen": "math",
+                                "expr": "previousTimestamp + duration",
+                                "format": "yyyy-MM-dd HH:mm:ss.SSS",
+                                "names": {
+                                    "previousTimestamp": { "_gen": "previousEvent", "path": ["data", "status", "timestamp"] },
+                                    "duration": {
+                                        "_gen": "weightedOneOf",
+                                        "choices": [
+                                            {"weight": 6, "value": {"_gen": "uniformDistribution", "bounds": [300000, 600000], "decimals": 0}},
+                                            {"weight": 4, "value": 0}
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "Completed": {
+                            "status_name": "Completed",
+                            "timestamp": {
+                                "_gen": "math",
+                                "expr": "previousTimestamp + duration",
+                                "format": "yyyy-MM-dd HH:mm:ss.SSS",
+                                "names": {
+                                    "previousTimestamp": { "_gen": "previousEvent", "path": ["data", "status", "timestamp"] },
+                                    "duration": {
+                                        "_gen": "weightedOneOf",
+                                        "choices": [
+                                            {"weight": 6, "value": {"_gen": "uniformDistribution", "bounds": [300000, 600000], "decimals": 0}},
+                                            {"weight": 4, "value": 0}
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "dt_current_timestamp": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "now" },
+                    "format": "yyyy-MM-dd HH:mm:ss.SSS"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "azure": {
+            "kind": "azureBlobStorage",
+            "connectionConfigs": {
+                "connectionString": ""
+            },
+            "batchConfigs": {
+                "lingerMs": 2000,
+                "batchElements": 10000,
+                "batchBytes": 5242880
+            }
+        }
+    }
+}

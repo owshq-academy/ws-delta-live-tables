@@ -1,0 +1,54 @@
+{
+    "generators": [
+        {
+            "table": "drivers",
+            "row": {
+                "driver_id": { "_gen": "uuid" },
+                "name": { "_gen": "string", "expr": "#{Name.fullName}" },
+                "email": { "_gen": "string", "expr": "#{Internet.emailAddress}" },
+                "phone_number": { "_gen": "string", "expr": "#{PhoneNumber.phoneNumber}" },
+                "vehicle_type": { "_gen": "oneOf", "choices": ["Car", "Motorcycle", "Bicycle", "Scooter"] },
+                "license_plate": { "_gen": "string", "expr": "#{bothify '???-####'}" },
+                "registration_date": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "uniformDistribution", "bounds": [1514764800000, { "_gen": "now" }] },
+                    "format": "yyyy-MM-dd HH:mm:ss"
+                },
+                "total_deliveries": {
+                    "_gen": "uniformDistribution",
+                    "bounds": [0, 1000],
+                    "decimals": 0
+                },
+                "total_earnings": {
+                    "_gen": "normalDistribution",
+                    "mean": 5000,
+                    "sd": 1000,
+                    "decimals": 2
+                },
+                "average_rating": {
+                    "_gen": "uniformDistribution",
+                    "bounds": [3.5, 5.0],
+                    "decimals": 1
+                },
+                "last_login": {
+                    "_gen": "formatDateTime",
+                    "ms": { "_gen": "uniformDistribution", "bounds": [1672531200000, { "_gen": "now" }] },
+                    "format": "yyyy-MM-dd HH:mm:ss"
+                },
+                "status": { "_gen": "oneOf", "choices": ["Active", "Inactive", "Banned"] }
+            }
+        }
+    ],
+    "connections": {
+        "pg": {
+            "kind": "postgres",
+            "connectionConfigs": {
+                "host": "",
+                "port": ,
+                "db": "",
+                "username": "",
+                "password": ""
+            }
+        }
+    }
+}
